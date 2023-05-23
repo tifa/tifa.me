@@ -34,7 +34,7 @@ $ timeoff list
 To install ``timeoff``:
 
 ```console
-$ pip install git+https://github.com/tifa/timeoff
+$ pip install timeoff
 ```
 
 Documentation is in the works! Please run the `-h` help flag in the meantime. The interactive prompts will guide you through further instructions.
