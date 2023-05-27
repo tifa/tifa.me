@@ -29,7 +29,7 @@ dependencies = [
 ]
 
 [project.scripts]
-timeoff = "timeoff.cli:main"
+timeoff = "timeoff.commands:main"
 
 [project.urls]
 Homepage = "https://github.com/tifa/timeoff"
