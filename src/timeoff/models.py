@@ -8,7 +8,6 @@ from datetime import datetime
 
 from timeoff.config import DATA_DIR, DATA_VERSION
 from timeoff.schedules import (
-    Schedule,
     SemiMonthly,  # noqa: F401
 )
 

@@ -2,6 +2,9 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from datetime import timedelta
 
+from PyInquirer import prompt
+
+from timeoff.prompts import int_validator
 from timeoff.util import print_ordinal
 
 """
@@ -106,36 +109,24 @@ class SemiMonthly(PayPeriod):
 
     @staticmethod
     def setup_prompt():
-        while True:
-            first = input("First pay date of the month (1-28) [1]: ") or 1
-            try:
-                first = int(first)
-            except ValueError:
-                print("Please enter a valid number")
-                continue
-
-            if first < 1 or first > SemiMonthly.MAX_COMMON_DAY:
-                print("Please enter a number between 1 and 28")
-            else:
-                break
-
-        while True:
-            second = (
-                input(
-                    "Second pay date of the month (2-28 or -1 for last day of the"
-                    " month) [15]: ",
-                )
-                or 15
-            )
-            try:
-                second = int(second)
-            except ValueError:
-                print("Please enter a valid number")
-                continue
-
-            if (second <= 1 or second > SemiMonthly.MAX_COMMON_DAY) and second != -1:
-                print("Please enter a number between 2 and 28")
-            else:
-                break
-
-        return [first, second]
+        """Prompt to set up the schedule and return a list of arguments for this class."""
+        questions = [
+            {
+                "type": "input",
+                "name": "first",
+                "message": "First pay date of the month (1-28)",
+                "default": "1",
+                "validate": int_validator(lambda val: val >= 1 and val <= SemiMonthly.MAX_COMMON_DAY or "Please enter a number between 1 and 28"),
+                "filter": lambda val: int(val),
+            },
+            {
+                "type": "input",
+                "name": "second",
+                "message": "Second pay date of the month (2-28 or -1 for last day of the month)",
+                "default": "15",
+                "validate": int_validator(lambda val: (val >= 2 and val <= SemiMonthly.MAX_COMMON_DAY) or val == -1 or "Please enter a number between 2 and 28 or -1"), 
+                "filter": lambda val: int(val),
+            },
+        ]
+        answers = prompt(questions)
+        return [answers["first"], answers["second"]]

@@ -2,11 +2,12 @@ import argparse
 import os
 from datetime import datetime, timedelta
 
+from PyInquirer import prompt
 from tabulate import tabulate
 
 from timeoff.config import DATA_DIR, SCHEDULES
 from timeoff.models import Absence, AccruedPTO, Policy, Settings
-from timeoff.prompts import date_prompt, float_prompt, int_prompt, str_prompt
+from timeoff.prompts import date_validator, float_validator
 from timeoff.update import update_pto
 
 
@@ -118,33 +119,46 @@ def show_table():
 @header
 @refresh_pto
 def add_prompt():
-    current_date = str(datetime.now().date())
+    current_date = datetime.now().date()
+    starting_date = Settings.get().starting_date
 
-    while True:
-        start_date = date_prompt("Start date (YYYY-MM-DD)", current_date)
-        starting_date = Settings.get().starting_date
-        if start_date < starting_date:
-            print(f"Date must be on or after the timeoff starting date {starting_date}")
-        else:
-            break
+    questions = [
+        {
+            "type": "input",
+            "name": "start_date",
+            "message": "Start date (YYYY-MM-DD)",
+            "default": str(current_date),
+            "validate": date_validator(lambda val: val >= current_date
+                                        or f"Please enter a date that is on or after the starting date {starting_date}"),
+            "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
+        },
+    ]
+    answers = prompt(questions)
+    questions = [
+        {
+            "type": "input",
+            "name": "end_date",
+            "message": "End date (YYYY-MM-DD)",
+            "default": str(answers["start_date"]),
+            "validate": date_validator(lambda val: val >= answers["start_date"]
+                                        or f"Please enter a date that is on or after the start date {answers['start_date']}"),
+            "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
+        },
+        {
+            "type": "input",
+            "name": "rate",
+            "message": "Hours per day",
+            "default": "8",
+            "validate": float_validator(lambda val: val > 0
+                                         or "Please enter a number greater than 0"),
+            "filter": lambda val: float(val),
+        },
+    ]
+    answers.update(prompt(questions))
 
-    while True:
-        end_date = date_prompt("End date (YYYY-MM-DD)", str(start_date))
-        if end_date < start_date:
-            print("End date must be on or after the start date")
-        else:
-            break
-
-    while True:
-        rate = float_prompt("Hours per day", 8)
-        if rate <= 0:
-            print("Please enter a number greater than 0")
-        else:
-            break
-
-    current_date = start_date
-    while current_date <= end_date:
-        Absence(current_date, rate).save()
+    current_date = answers["start_date"]
+    while current_date <= answers["end_date"]:
+        Absence(current_date, answers["rate"]).save()
         current_date += timedelta(days=1)
 
     print("Saved!")
@@ -160,8 +174,17 @@ def list_prompt():
 @header
 @refresh_pto
 def rm_prompt():
-    date = date_prompt("Date to remove (YYYY-MM-DD)")
-    Absence.rm(date)
+    questions = [
+        {
+            "type": "input",
+            "name": "date",
+            "message": "Date to remove (YYYY-MM-DD)",
+            "validate": date_validator(lambda val: True),
+            "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
+        },
+    ]
+    answers = prompt(questions)
+    Absence.rm(answers["date"])
     print("Removed!")
     show_table()
 
@@ -174,40 +197,54 @@ def settings_prompt():
         print("This will wipe out all of your data! :(")
         return
 
-    while True:
-        starting_balance = int_prompt("Starting balance (hours)", 0)
-        if starting_balance < 0:
-            print("Please enter a number greater than or equal to 0")
-        else:
-            break
+    questions = [
+        {
+            "type": "input",
+            "name": "starting_balance",
+            "message": "Starting balance (hours)",
+            "default": "0",
+            "validate": float_validator(lambda val: val >= 0
+                                         or "Please enter a number greater than or equal to 0"),
+            "filter": lambda val: float(val),
+        },
+        {
+            "type": "input",
+            "name": "starting_date",
+            "message": "Starting date (YYYY-MM-DD)",
+            "default": str(datetime.now().date()),
+            "validate": date_validator(lambda val: val <= datetime.now().date()
+                                        or "Please enter a date that is on or before today"),
+            "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
+        },
+        {
+            "type": "list",
+            "name": "schedule",
+            "message": "Schedule",
+            "choices": SCHEDULES.keys(),
+            "filter": lambda val: SCHEDULES[val],
+        },
+    ]
+    answers = prompt(questions)
 
-    while True:
-        starting_date = date_prompt("Starting date (YYYY-MM-DD)", str(datetime.now().date()))
-        if starting_date > datetime.now().date():
-            print("Please enter a date in the past or today")
-        else:
-            break
+    schedule_args = answers["schedule"].setup_prompt()
 
-    while True:
-        schedule = str_prompt("Schedule [semi-monthly]", "semi-monthly")
-        if schedule in SCHEDULES:
-            break
-        print("Please enter a valid schedule. Available options are:")
-        for schedule in SCHEDULES:
-            print(f"  - {schedule}")
-
-    args = SCHEDULES[schedule].setup_prompt()
-
-    while True:
-        rate = float_prompt("Rate (hours per period)", 2)
-        if rate <= 0:
-            print("Please enter a number greater than 0")
-        else:
-            break
+    questions = [
+        {
+            "type": "input",
+            "name": "rate",
+            "message": "Rate (hours per period)",
+            "default": "4",
+            "validate": float_validator(lambda val: val > 0
+                                         or "Please enter a number greater than 0"),
+            "filter": lambda val: float(val),
+        },
+    ]
+    rate_answers = prompt(questions)
+    answers.update(rate_answers)
 
     # TODO: Transactionalize
-    Settings(starting_balance, starting_date).save()
-    Policy(starting_date, SCHEDULES[schedule].__name__, args, rate).save()
+    Settings(answers["starting_balance"], answers["starting_date"]).save()
+    Policy(answers["starting_date"], answers["schedule"].__name__, schedule_args, answers["rate"]).save()
     print("Saved!")
 
     update_pto()
