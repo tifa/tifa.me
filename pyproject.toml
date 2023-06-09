@@ -2,7 +2,7 @@
 name = "timeoff"
 description = "Track vacation hours accrued."
 readme = "README.md"
-version = "0.0.2"
+version = "0.0.3"
 license = { text = "MIT" }
 requires-python = ">=3.8"
 authors = [
@@ -40,7 +40,7 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 target-version = "py38"
-line-length = 88
+line-length = 120
 select = [
   "F",    # Pyflakes
   "E",    # pycodestyle
@@ -83,6 +83,6 @@ select = [
 ]
 
 [tool.ruff.per-file-ignores]
-"src/timeoff/cli.py" = ["T201"]
+"src/timeoff/commands.py" = ["T201"]
 "src/timeoff/prompts.py" = ["T201"]
 "src/timeoff/schedules.py" = ["T201"]

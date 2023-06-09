@@ -2,17 +2,9 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from datetime import timedelta
 
-from PyInquirer import prompt
-
-from timeoff.prompts import int_validator
+from timeoff.prompt import int_validator, prompt
 from timeoff.util import print_ordinal
 
-"""
-Schedules
-=========
-
-This module contains classes that represent different accrual schedules.
-"""
 
 @dataclass
 class Schedule:
@@ -116,17 +108,22 @@ class SemiMonthly(PayPeriod):
                 "name": "first",
                 "message": "First pay date of the month (1-28)",
                 "default": "1",
-                "validate": int_validator(lambda val: val >= 1 and val <= SemiMonthly.MAX_COMMON_DAY or "Please enter a number between 1 and 28"),
-                "filter": lambda val: int(val),
-            },
-            {
-                "type": "input",
-                "name": "second",
-                "message": "Second pay date of the month (2-28 or -1 for last day of the month)",
-                "default": "15",
-                "validate": int_validator(lambda val: (val >= 2 and val <= SemiMonthly.MAX_COMMON_DAY) or val == -1 or "Please enter a number between 2 and 28 or -1"), 
+                "validate": int_validator(lambda val: val >= 1 and val <= SemiMonthly.MAX_COMMON_DAY
+                                          or "Please enter a number between 1 and 28"),
                 "filter": lambda val: int(val),
             },
         ]
         answers = prompt(questions)
+        questions = [
+            {
+                "type": "input",
+                "name": "second",
+                "message": "Second pay date of the month (2-28 or -1 for last day of the month)",
+                "default": str(answers["first"] + 1),
+                "validate": int_validator(lambda val: val >= answers["first"] + 1 and val <= SemiMonthly.MAX_COMMON_DAY
+                                          or val == -1 or "Please enter a number between 2 and 28 or -1"), 
+                "filter": lambda val: int(val),
+            },
+        ]
+        answers.update(prompt(questions))
         return [answers["first"], answers["second"]]

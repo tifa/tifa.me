@@ -1,10 +1,10 @@
-import os
+from pathlib import Path
 
-from timeoff.schedules import SemiMonthly
+from timeoff.model.schedule import SemiMonthly
 
 SCHEDULES = {
     "semi-monthly": SemiMonthly,
 }
 
-DATA_DIR = os.path.expanduser("~/.timeoff")
+DATA_DIR = Path("~/.timeoff").expanduser()
 DATA_VERSION = 0

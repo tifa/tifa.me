@@ -1,13 +1,14 @@
 import argparse
-import os
 from datetime import datetime, timedelta
+from pathlib import Path
 
-from PyInquirer import prompt
 from tabulate import tabulate
 
 from timeoff.config import DATA_DIR, SCHEDULES
-from timeoff.models import Absence, AccruedPTO, Policy, Settings
-from timeoff.prompts import date_validator, float_validator
+from timeoff.model.entry import Absence, Accrued
+from timeoff.model.policy import Policy
+from timeoff.model.setting import Setting
+from timeoff.prompt import date_validator, float_validator, prompt
 from timeoff.update import update_pto
 
 
@@ -27,7 +28,7 @@ def header(func):
 
 def refresh_pto(func):
     def wrapper():
-        if not os.path.isdir(DATA_DIR):
+        if not Path(DATA_DIR).is_dir():
             print("Please initialize by running `timeoff settings`.")
         else:
             update_pto()
@@ -44,11 +45,14 @@ def show_table():
         entries.sort(key=lambda x: x.date)
         it = iter(entries)
         current_entry = next(it, None)
+        if current_entry is None:
+            return []
+        
         start_date = current_entry.date
         end_date = start_date
         rate = (
             current_entry.rate
-            if type(current_entry) == AccruedPTO
+            if type(current_entry) == Accrued
             else (current_entry.rate * -1)
         )
 
@@ -64,7 +68,7 @@ def show_table():
                 end_date = start_date
                 rate = (
                     next_entry.rate
-                    if type(next_entry) == AccruedPTO
+                    if type(next_entry) == Accrued
                     else (next_entry.rate * -1)
                 )
             current_entry = next_entry
@@ -72,13 +76,13 @@ def show_table():
         results.append((start_date, end_date, rate))
         return results
 
-    accrued_pto = list(AccruedPTO.get().values())
+    accrued_pto = list(Accrued.get().values())
     absences = list(Absence.get().values())
     entries = accrued_pto + absences
     entries.sort(key=lambda x: x.date)
     entries = concat_entries(entries)
 
-    settings = Settings.get()
+    settings = Setting.get()
 
     headers = ["Start", "End", "Type", "Hours", "Remaining"]
 
@@ -92,7 +96,7 @@ def show_table():
             [
                 entry[0],
                 "-" if entry[0] == entry[1] else entry[1],
-                "Accrued PTO" if entry[2] > 0 else "Vacation",
+                "Accrued" if entry[2] > 0 else "Vacation",
                 total_hours,
                 remaining,
             ],
@@ -120,7 +124,7 @@ def show_table():
 @refresh_pto
 def add_prompt():
     current_date = datetime.now().date()
-    starting_date = Settings.get().starting_date
+    starting_date = Setting.get().starting_date
 
     questions = [
         {
@@ -129,7 +133,7 @@ def add_prompt():
             "message": "Start date (YYYY-MM-DD)",
             "default": str(current_date),
             "validate": date_validator(lambda val: val >= current_date
-                                        or f"Please enter a date that is on or after the starting date {starting_date}"),
+                                       or f"Please enter a date on/after the starting date {starting_date}"),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
     ]
@@ -141,7 +145,7 @@ def add_prompt():
             "message": "End date (YYYY-MM-DD)",
             "default": str(answers["start_date"]),
             "validate": date_validator(lambda val: val >= answers["start_date"]
-                                        or f"Please enter a date that is on or after the start date {answers['start_date']}"),
+                                        or f"Please enter a date on/after the start date {answers['start_date']}"),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
         {
@@ -179,7 +183,7 @@ def rm_prompt():
             "type": "input",
             "name": "date",
             "message": "Date to remove (YYYY-MM-DD)",
-            "validate": date_validator(lambda val: True),
+            "validate": date_validator(lambda _: True),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
     ]
@@ -191,7 +195,7 @@ def rm_prompt():
 
 @header
 def settings_prompt():
-    if os.path.isdir(DATA_DIR):
+    if Path(DATA_DIR).is_dir():
         print("Functionality to update settings and policies TBD.")
         print("If you want to start all over, delete the directory: ~/.timeoff")
         print("This will wipe out all of your data! :(")
@@ -242,8 +246,7 @@ def settings_prompt():
     rate_answers = prompt(questions)
     answers.update(rate_answers)
 
-    # TODO: Transactionalize
-    Settings(answers["starting_balance"], answers["starting_date"]).save()
+    Setting(answers["starting_balance"], answers["starting_date"]).save()
     Policy(answers["starting_date"], answers["schedule"].__name__, schedule_args, answers["rate"]).save()
     print("Saved!")
 

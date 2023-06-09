@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from timeoff.exceptions import PolicyNotFoundError
-from timeoff.models import AccruedPTO, Policy, Settings
+from timeoff.model.entry import Accrued
+from timeoff.model.policy import Policy
+from timeoff.model.setting import Setting
 
 
 def effective_policy(policies, date):
@@ -22,16 +24,13 @@ def effective_policy(policies, date):
 def update_pto():
     all_policies = Policy.get()
 
-    all_accrued_pto = AccruedPTO.get()
-    if len(all_accrued_pto) == 0:
-        last_updated = Settings.get().starting_date
-    else:
-        last_updated = sorted(all_accrued_pto.keys())[-1]
+    all_accrued_pto = Accrued.get()
+    last_updated = Setting.get().starting_date if len(all_accrued_pto) == 0 else sorted(all_accrued_pto.keys())[-1]
 
     current_date = last_updated
     while current_date < datetime.today().date():
         policy = effective_policy(all_policies, current_date)
         current_date = policy.schedule.next_date(current_date)
         if current_date < datetime.today().date():
-            AccruedPTO(current_date, policy.rate).save()
+            Accrued(current_date, policy.rate).save()
 
