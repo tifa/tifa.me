@@ -7,3 +7,6 @@ dist/
 
 # Environments
 venv/
+
+# Linter
+.ruff_cache/

@@ -13,9 +13,9 @@ help: Makefile  # Print this message
 	$(call usage)
 
 .PHONY: ruff
-ruff:  # Ruff linter 🐶
+ruff:  # Ruff linter
 	$(ACTIVATE) ruff check .
 
-.PHONY: ruff
+.PHONY: fix
 fix:  # Auto fix lint violations
 	$(ACTIVATE) ruff check . --fix
