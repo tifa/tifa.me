@@ -10,6 +10,7 @@ from timeoff.util import print_ordinal
 class Schedule:
     """Base class for all schedules."""
 
+
 @dataclass
 class PayPeriod(Schedule):
     """Base class for schedules based on pay periods."""
@@ -108,8 +109,11 @@ class SemiMonthly(PayPeriod):
                 "name": "first",
                 "message": "First pay date of the month (1-28)",
                 "default": "1",
-                "validate": int_validator(lambda val: val >= 1 and val <= SemiMonthly.MAX_COMMON_DAY
-                                          or "Please enter a number between 1 and 28"),
+                "validate": int_validator(
+                    lambda val: val >= 1
+                    and val <= SemiMonthly.MAX_COMMON_DAY
+                    or "Please enter a number between 1 and 28"
+                ),
                 "filter": lambda val: int(val),
             },
         ]
@@ -120,8 +124,12 @@ class SemiMonthly(PayPeriod):
                 "name": "second",
                 "message": "Second pay date of the month (2-28 or -1 for last day of the month)",
                 "default": str(answers["first"] + 1),
-                "validate": int_validator(lambda val: val >= answers["first"] + 1 and val <= SemiMonthly.MAX_COMMON_DAY
-                                          or val == -1 or "Please enter a number between 2 and 28 or -1"), 
+                "validate": int_validator(
+                    lambda val: val >= answers["first"] + 1
+                    and val <= SemiMonthly.MAX_COMMON_DAY
+                    or val == -1
+                    or "Please enter a number between 2 and 28 or -1"
+                ),
                 "filter": lambda val: int(val),
             },
         ]

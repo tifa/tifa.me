@@ -34,4 +34,3 @@ class Policy(Model):
             else:
                 data[entry["date"]] = Policy(**entry)
         return data
-    

@@ -33,4 +33,3 @@ def update_pto():
         current_date = policy.schedule.next_date(current_date)
         if current_date < datetime.today().date():
             Accrued(current_date, policy.rate).save()
-

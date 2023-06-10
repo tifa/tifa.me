@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from datetime import date, datetime
 
@@ -15,7 +14,7 @@ class Setting(Model):
         data = super(Setting, Setting)._load()[-1]
         data["starting_balance"] = float(data["starting_balance"])
         data["starting_date"] = datetime.strptime(
-            data["starting_date"], "%Y-%m-%d",
+            data["starting_date"],
+            "%Y-%m-%d",
         ).date()
         return Setting(**data)
-

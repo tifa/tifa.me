@@ -1,21 +1,26 @@
 include Make.defs
 
-.PHONY: venv
-venv: venv/touchfile
+.git/hooks/pre-commit:
+	$(ACTIVATE) pre-commit install
+	@touch $@
 
+venv: venv/touchfile .git/hooks/pre-commit
 venv/touchfile: requirements.txt
 	test -d venv || virtualenv venv
-	. venv/bin/activate && pip install -Ur requirements.txt
-	touch venv/touchfile
+	$(ACTIVATE) pip install -Ur requirements.txt
+	touch $@
 
 .PHONY: help
 help: Makefile  # Print this message
 	$(call usage)
 
-.PHONY: ruff
-ruff:  # Ruff linter
-	$(ACTIVATE) ruff check .
+.PHONY: lint
+lint: venv  # Run linters
+	$(ACTIVATE) ruff . --fix
 
-.PHONY: fix
-fix:  # Auto fix lint violations
-	$(ACTIVATE) ruff check . --fix
+.PHONY: fmt
+fmt: venv  # Run formatters
+	$(ACTIVATE) black .
+
+.PHONY: check
+check: lint fmt  # Run linters and formatters
