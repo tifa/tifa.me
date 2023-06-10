@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Type check and linting pre-commits
+
 ## [0.0.4] - 2023-06-09
 
 ## Added
