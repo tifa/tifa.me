@@ -7,7 +7,6 @@ from tabulate import tabulate
 from timeoff.config import DATA_DIR, SCHEDULES
 from timeoff.model.entry import Absence, Accrued
 from timeoff.model.policy import Policy
-from timeoff.model.setting import Setting
 from timeoff.prompt import date_validator, float_validator, prompt
 from timeoff.update import update_pto
 
@@ -76,12 +75,10 @@ def show_table():
     entries.sort(key=lambda x: x.date)
     entries = concat_entries(entries)
 
-    settings = Setting.get()
-
     headers = ["Start", "End", "Type", "Hours", "Remaining"]
 
     formatted = []
-    remaining = settings.starting_balance
+    remaining = 0
     for entry in entries:
         num_days = (entry[1] - entry[0]).days + 1
         total_hours = entry[2] * num_days
@@ -95,10 +92,6 @@ def show_table():
                 remaining,
             ],
         )
-    formatted.insert(
-        0,
-        ["", "", "Initial", settings.starting_balance, settings.starting_balance],
-    )
 
     policies = Policy.get()
     latest_policy_date = list(policies.keys())[-1]
@@ -120,7 +113,8 @@ def show_table():
 @refresh_pto
 def add_prompt():
     current_date = datetime.now().date()
-    starting_date = Setting.get().starting_date
+    all_accrued_pto = Accrued.get()
+    starting_date = sorted(all_accrued_pto.keys())[0]
 
     questions = [
         {
@@ -243,7 +237,7 @@ def settings_prompt():
     rate_answers = prompt(questions)
     answers.update(rate_answers)
 
-    Setting(answers["starting_balance"], answers["starting_date"]).save()
+    Accrued(answers["starting_date"], answers["rate"]).save()
     Policy(answers["starting_date"], answers["schedule"].__name__, schedule_args, answers["rate"]).save()
     print("Saved!")
 

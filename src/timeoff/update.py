@@ -3,7 +3,6 @@ from datetime import datetime
 from timeoff.exceptions import PolicyNotFoundError
 from timeoff.model.entry import Accrued
 from timeoff.model.policy import Policy
-from timeoff.model.setting import Setting
 
 
 def effective_policy(policies, date):
@@ -25,7 +24,7 @@ def update_pto():
     all_policies = Policy.get()
 
     all_accrued_pto = Accrued.get()
-    last_updated = Setting.get().starting_date if len(all_accrued_pto) == 0 else sorted(all_accrued_pto.keys())[-1]
+    last_updated = sorted(all_accrued_pto.keys())[-1]
 
     current_date = last_updated
     while current_date < datetime.today().date():

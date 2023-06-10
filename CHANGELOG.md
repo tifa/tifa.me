@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - More formatting tools.
 
+## Changed
+
+- Remove settings, use accrued when initializing.
+
 ## Fixed
 
 - Fix vacation start date validation.
