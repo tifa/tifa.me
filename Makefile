@@ -44,3 +44,7 @@ fmt: venv  # Run formatters
 
 .PHONY: check
 check: lint fmt  # Run linters and formatters
+
+.PHONY: python
+python: venv  # Python shell with API imported
+	@python3 -i -c "from timeoff.__init__ import *"
