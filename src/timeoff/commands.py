@@ -123,7 +123,7 @@ def add_prompt():
             "message": "Start date (YYYY-MM-DD)",
             "default": str(current_date),
             "validate": date_validator(
-                lambda val: val >= starting_date or f"Please enter a date on/after the starting date {starting_date}"
+                lambda val: val >= starting_date or f"Please enter a date on/after the starting date {starting_date}",
             ),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
@@ -137,7 +137,7 @@ def add_prompt():
             "default": str(answers["start_date"]),
             "validate": date_validator(
                 lambda val: val >= answers["start_date"]
-                or f"Please enter a date on/after the start date {answers['start_date']}"
+                or f"Please enter a date on/after the start date {answers['start_date']}",
             ),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
@@ -208,7 +208,7 @@ def settings_prompt():
             "message": "Starting date (YYYY-MM-DD)",
             "default": str(datetime.now().date()),
             "validate": date_validator(
-                lambda val: val <= datetime.now().date() or "Please enter a date that is on or before today"
+                lambda val: val <= datetime.now().date() or "Please enter a date that is on or before today",
             ),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },

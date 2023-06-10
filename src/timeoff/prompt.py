@@ -13,7 +13,7 @@ PROMPT_STYLE = style_from_dict(
         Token.Instruction: "",  # default
         Token.Answer: "#00FFFF bold",
         Token.Question: "",
-    }
+    },
 )
 
 

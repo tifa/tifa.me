@@ -112,7 +112,7 @@ class SemiMonthly(PayPeriod):
                 "validate": int_validator(
                     lambda val: val >= 1
                     and val <= SemiMonthly.MAX_COMMON_DAY
-                    or "Please enter a number between 1 and 28"
+                    or "Please enter a number between 1 and 28",
                 ),
                 "filter": lambda val: int(val),
             },
@@ -128,7 +128,7 @@ class SemiMonthly(PayPeriod):
                     lambda val: val >= answers["first"] + 1
                     and val <= SemiMonthly.MAX_COMMON_DAY
                     or val == -1
-                    or "Please enter a number between 2 and 28 or -1"
+                    or "Please enter a number between 2 and 28 or -1",
                 ),
                 "filter": lambda val: int(val),
             },
