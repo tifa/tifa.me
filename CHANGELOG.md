@@ -11,8 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
+- Badges
 - Slack reminder example
-- Type check and linting pre-commits
+- Type check and linting pre-commits to Github Actions
 - Code owners
 
 ## Changed

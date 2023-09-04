@@ -1,5 +1,7 @@
 # timeoff 🏝
 
+[![pypi](https://img.shields.io/pypi/v/timeoff.svg)](https://pypi.python.org/pypi/timeoff) [![license](https://img.shields.io/pypi/l/timeoff.svg)](https://pypi.python.org/pypi/timeoff) [![python](https://img.shields.io/pypi/pyversions/timeoff.svg)](https://pypi.python.org/pypi/timeoff) [![ci](https://github.com/tifa/timeoff/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tifa/timeoff/actions/workflows/ci.yml)
+
 Do your PTO hours keep expiring? Are you saving up for a big trip? Do you have
 a flex vacation policy? Track your hours accrued and set goals and
 reminders to take a break!
