@@ -2,7 +2,6 @@
 name = "timeoff"
 description = "Track vacation hours accrued."
 readme = "README.md"
-version = "0.0.4"
 license = { text = "MIT" }
 requires-python = ">=3.8"
 authors = [
@@ -27,6 +26,10 @@ dependencies = [
   "sphinx-prompt==1.5.0",
   "tabulate==0.9.0",
 ]
+dynamic = ["version"]
+
+[tool.setuptools_scm]
+write_to = "src/timeoff/_version.py"
 
 [project.scripts]
 timeoff = "timeoff.commands:main"
@@ -35,8 +38,8 @@ timeoff = "timeoff.commands:main"
 Homepage = "https://github.com/tifa/timeoff"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools", "setuptools-scm", "wheel", "twine"]
+build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 120
@@ -92,3 +95,6 @@ select = [
 "src/timeoff/commands.py" = ["T201"]
 "src/timeoff/prompts.py" = ["T201"]
 "src/timeoff/schedules.py" = ["T201"]
+
+[tool.setuptools-git-versioning]
+enabled = true

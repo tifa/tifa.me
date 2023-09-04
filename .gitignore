@@ -2,6 +2,7 @@
 __pycache__/
 
 # Distribution / packaging
+src/timeoff/_version.py
 dist/
 *.egg-info/
 
