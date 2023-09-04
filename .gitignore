@@ -8,5 +8,6 @@ dist/
 # Environments
 venv/
 
-# Linter
+# Linter / type checker
+.mypy_cache/
 .ruff_cache/
