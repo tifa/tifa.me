@@ -19,4 +19,4 @@ Get notified in Slack when your accrued hours reaches a certain threshold.
     ```
 
 
-[slack-app]: https://api.slack.com/messaging/webhooks#:~:text=Enable%20Incoming%20Webhooks,toggle%20to%20switch%20it%20on.
+[slack-app]: https://api.slack.com/messaging/webhooks
