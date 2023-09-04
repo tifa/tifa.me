@@ -22,7 +22,7 @@ class PayPeriod(Schedule):
         """Return the next date."""
 
     @abstractmethod
-    def setup_prompt():
+    def setup_prompt(self):
         """Prompt to set up the schedule. Should return a list of arguments."""
 
     def _next_month(self, date):

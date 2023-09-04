@@ -1,13 +1,28 @@
-name: Upload Python Package
+name: python package
 
 on:
-  release:
-    types: [published]
+  push:
+
+concurrency: lint-${{ github.sha }}
 
 jobs:
-  deploy:
+  check:
+    runs-on: ubuntu-latest
+    environment: develop
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run checks
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Run pre-commit hooks
+        uses: pre-commit/action@v3.0.0
+
+  release:
     runs-on: ubuntu-latest
     environment: release
+    needs: check
+    if: github.event_name == 'release'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

@@ -34,21 +34,14 @@ help: Makefile  # Print this message
 ruff:  # Auto-fix with Ruff
 	@$(ACTIVATE) ruff . --fix
 
-.PHONY: lint
-lint: venv  # Run linters
-	@$(ACTIVATE) ruff .
-
-.PHONY: fmt
-fmt: venv  # Run formatters
-	@$(ACTIVATE) black .
-
 .PHONY: check
-check: lint fmt  # Run linters and formatters
+check: venv  # Run linters and formatters
+	@$(ACTIVATE) pre-commit run --all
 
 .PHONY: python
 python: venv  # Python shell with API imported
-	@python3 -i -c "from timeoff.__init__ import *"
+	@$(ACTIVATE) python3 -i -c "from timeoff.__init__ import *"
 
 .PHONY: dev
 dev: venv
-	@pip install -e .
+	@$(ACTIVATE) pip install -e .

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import pickle
 from dataclasses import fields
@@ -35,6 +37,6 @@ class Model:
 
     def save(self) -> None:
         data = {}
-        for field in fields(self):
+        for field in fields(self):  # type: ignore
             data[field.name] = str(getattr(self, field.name))
         self._write(data)
