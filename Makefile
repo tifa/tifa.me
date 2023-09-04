@@ -3,7 +3,7 @@ MAKEFLAGS += --warn-undefined-variables
 
 ACTIVATE = . venv/bin/activate;
 
-COL_WIDTH = 10
+COL_WIDTH = 15
 FORMAT_YELLOW = 33
 FORMAT_BOLD_YELLOW = \e[1;$(FORMAT_YELLOW)m
 FORMAT_END = \e[0m
@@ -49,6 +49,6 @@ check: lint fmt  # Run linters and formatters
 python: venv  # Python shell with API imported
 	@python3 -i -c "from timeoff.__init__ import *"
 
-.PHONY: dev
-dev: venv
+.PHONY: install-dev
+install-dev: venv  # Install in development mode
 	@pip install -e .
