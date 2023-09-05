@@ -37,6 +37,8 @@ To install ``timeoff``:
 $ pip install timeoff
 ```
 
+## Usage
+
 Documentation is in the works! Please run the `-h` help flag in the meantime. The interactive prompts will guide you through further instructions.
 
 ```console
@@ -55,4 +57,30 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+```
+
+The data is stored in `~/.timeoff`.
+
+### Python API
+
+You can also use this as a Python library.
+
+Retrieve a list of all PTO hours remaining and absenses taken.
+
+```python
+import timeoff
+timeoff.get()
+```
+
+Return the number of hours of PTO remaining as of today.
+
+```python
+timeoff.available_hours()
+```
+
+You can also pass in a future date to see how many hours you'll have accumulated by then.
+
+```python
+from datetime import date
+timeoff.available_hours(date(2023, 9, 4))
 ```
