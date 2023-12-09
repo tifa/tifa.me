@@ -2,6 +2,8 @@ name: ci
 
 on:
   push:
+  release:
+    types: [published]
 
 concurrency: lint-${{ github.sha }}
 
