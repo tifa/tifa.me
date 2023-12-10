@@ -1,7 +1,7 @@
 import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
-import questionary
+
 from tabulate import tabulate
 
 from timeoff.config import DATA_DIR, SCHEDULES
