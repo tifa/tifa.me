@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] - 2023-12-09
+
+## Changed
+
+- Replaced unmaintained `PyInquirer` with `questionary`
+
 ## [0.0.5] - 2023-09-04
 
 ## Added
@@ -53,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - GitHub Actions workflow to publish to PyPI
 
-[unreleased]: https://github.com/tifa/timeoff/compare/v0.0.5...HEAD
+[unreleased]: https://github.com/tifa/timeoff/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/tifa/timeoff/releases/tag/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/tifa/timeoff/releases/tag/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/tifa/timeoff/releases/tag/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/tifa/timeoff/releases/tag/v0.0.2...v0.0.3

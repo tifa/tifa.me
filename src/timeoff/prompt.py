@@ -1,63 +1,68 @@
 from datetime import datetime
 
-from prompt_toolkit.token import Token
-from PyInquirer import prompt as pi_prompt
-from PyInquirer import style_from_dict
+from questionary import prompt as q_prompt, Style
+from typing import List, Dict
 
-PROMPT_STYLE = style_from_dict(
-    {
-        Token.Separator: "#cc5454",
-        Token.QuestionMark: "#673ab7 bold",
-        Token.Selected: "#cc5454",  # default
-        Token.Pointer: "#673ab7 bold",
-        Token.Instruction: "",  # default
-        Token.Answer: "#00FFFF bold",
-        Token.Question: "",
-    },
+DEFAULT_PROMPT_STYLE = Style(
+    [
+        ("separator", "fg:#cc5454"),
+        ("questionmark", "fg:#673ab7 bold"),
+        ("selected", "fg:#cc5454"),  # default
+        ("pointer", "fg:#673ab7 bold"),
+        ("instruction", ""),  # default
+        ("answer", "#00FFFF bold"),
+        ("question", ""),
+    ]
 )
 
 
-def prompt(questions):
-    return pi_prompt(questions, style=PROMPT_STYLE)
+def prompt(questions: List[Dict]) -> Dict:
+    style = Style(
+        [
+            ("separator", "fg:#cc5454"),
+            ("questionmark", "fg:#673ab7 bold"),
+            ("selected", "fg:#cc5454"),  # default
+            ("pointer", "fg:#673ab7 bold"),
+            ("instruction", ""),  # default
+            ("answer", "#00FFFF bold"),
+            ("question", ""),
+        ]
+    )
+    kbi_msg = "Exiting..."
+    res = q_prompt(questions, style=style, kbi_msg=kbi_msg)
+    if len(res) == 0:
+        exit(0)
+    return res
 
 
-def date_validator(*func_args):
-    func = func_args[0]
-
-    def wrapper(*args):
+def date_validator(func):
+    def wrapper(val):
         try:
-            value = (datetime.strptime(args[0], "%Y-%m-%d").date(),)
+            date_val = datetime.strptime(val, "%Y-%m-%d").date()
         except ValueError:
             return "Please enter a valid date"
-        else:
-            return func(*value)
+        return func(date_val)
 
     return wrapper
 
 
-def float_validator(*func_args):
-    func = func_args[0]
-
-    def wrapper(*args):
+def float_validator(func):
+    def wrapper(val):
         try:
-            value = (float(args[0]),)
+            float_val = float(val)
         except ValueError:
             return "Please enter a valid number"
-        else:
-            return func(*value)
+        return func(float_val)
 
     return wrapper
 
 
-def int_validator(*func_args):
-    func = func_args[0]
-
-    def wrapper(*args):
+def int_validator(func):
+    def wrapper(val):
         try:
-            value = (int(args[0]),)
+            int_val = int(val)
         except ValueError:
             return "Please enter a valid number"
-        else:
-            return func(*value)
+        return func(int_val)
 
     return wrapper

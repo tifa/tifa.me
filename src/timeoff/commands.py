@@ -1,7 +1,7 @@
 import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
-
+import questionary
 from tabulate import tabulate
 
 from timeoff.config import DATA_DIR, SCHEDULES
@@ -118,7 +118,7 @@ def add_prompt():
 
     questions = [
         {
-            "type": "input",
+            "type": "text",
             "name": "start_date",
             "message": "Start date (YYYY-MM-DD)",
             "default": str(current_date),
@@ -131,7 +131,7 @@ def add_prompt():
     answers = prompt(questions)
     questions = [
         {
-            "type": "input",
+            "type": "text",
             "name": "end_date",
             "message": "End date (YYYY-MM-DD)",
             "default": str(answers["start_date"]),
@@ -142,7 +142,7 @@ def add_prompt():
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
         {
-            "type": "input",
+            "type": "text",
             "name": "rate",
             "message": "Hours per day",
             "default": "8",
@@ -172,7 +172,7 @@ def list_prompt():
 def rm_prompt():
     questions = [
         {
-            "type": "input",
+            "type": "text",
             "name": "date",
             "message": "Date to remove (YYYY-MM-DD)",
             "validate": date_validator(lambda _: True),
@@ -195,7 +195,7 @@ def settings_prompt():
 
     questions = [
         {
-            "type": "input",
+            "type": "text",
             "name": "starting_balance",
             "message": "Starting balance (hours)",
             "default": "0",
@@ -203,7 +203,7 @@ def settings_prompt():
             "filter": lambda val: float(val),
         },
         {
-            "type": "input",
+            "type": "text",
             "name": "starting_date",
             "message": "Starting date (YYYY-MM-DD)",
             "default": str(datetime.now().date()),
@@ -213,7 +213,7 @@ def settings_prompt():
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
         {
-            "type": "list",
+            "type": "select",
             "name": "schedule",
             "message": "Schedule",
             "choices": SCHEDULES.keys(),
@@ -226,7 +226,7 @@ def settings_prompt():
 
     questions = [
         {
-            "type": "input",
+            "type": "text",
             "name": "rate",
             "message": "Rate (hours per period)",
             "default": "4",

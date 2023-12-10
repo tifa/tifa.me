@@ -105,7 +105,7 @@ class SemiMonthly(PayPeriod):
         """Prompt to set up the schedule and return a list of arguments for this class."""
         questions = [
             {
-                "type": "input",
+                "type": "text",
                 "name": "first",
                 "message": "First pay date of the month (1-28)",
                 "default": "1",
@@ -120,7 +120,7 @@ class SemiMonthly(PayPeriod):
         answers = prompt(questions)
         questions = [
             {
-                "type": "input",
+                "type": "text",
                 "name": "second",
                 "message": "Second pay date of the month (2-28 or -1 for last day of the month)",
                 "default": str(answers["first"] + 1),
