@@ -1,17 +1,15 @@
-[project]
+# ------------------------------ #
+# PACKAGE, BUILD, AND DEPENDENCY #
+# ------------------------------ #
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+# support for PEP 621: https://github.com/python-poetry/roadmap/issues/3
+[tool.poetry]
 name = "timeoff"
-description = "Track vacation hours accrued."
-readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.8"
-authors = [
-  { name="Tiffany Huang", email="hello@tifa.io" },
-]
-keywords = [
-  "time off",
-  "vacation",
-  "pto",
-]
+authors = ["Tiffany Huang <hello@tifa.io>"]
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
   "Environment :: Console",
@@ -20,33 +18,88 @@ classifiers = [
   "Natural Language :: English",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
-dependencies = [
-  "questionary==2.0.1",
-  "tabulate==0.9.0",
-]
-dynamic = ["version"]
+description = "Track vacation hours accrued"
+keywords = ["time off", "vacation", "pto"]
+repository = "https://github.com/tifa/timeoff"
+license = "MIT"
+packages = [{ include = "timeoff", from = "src" }]
+readme = "README.md"
+version = "0.0.6"  # placeholder, set by poetry-dynamic-versioning
+# TODO: homepage
+# TODO: documentation
 
-[tool.setuptools_scm]
-write_to = "src/timeoff/_version.py"
+[tool.poetry.dependencies]
+python = "^3.8"
+questionary = "^2.0.1"
+tabulate = "^0.9.0"
 
-[project.scripts]
+[tool.poetry-dynamic-versioning]
+enable = true
+
+[tool.poetry.scripts]
 timeoff = "timeoff.commands:main"
 
-[project.urls]
-Homepage = "https://github.com/tifa/timeoff"
+[tool.poetry.urls]
+"Tracker" = "https://github.com/tifa/timeoff/issues"
 
-[build-system]
-requires = ["setuptools", "setuptools-scm", "wheel", "twine"]
-build-backend = "setuptools.build_meta"
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+coverage = { version = "^7.3.2", extras = ["toml"] }
+pre-commit = "^3.5.0"
+pytest = "^7.3.1"
+pytest-clarity = "^1.0.1"
+pytest-cov = "^4.1.0"
+pytest-sugar = "^0.9.7"
+pytest-xdist = "^3.5.0"
+ruff = "^0.0.269"
+tox = "^4.11.4"
+
+# ----- #
+# TESTS #
+# ----- #
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{38,39,310,311,312}
+isolated_build = true
+
+[gh-actions]
+python =
+  3.8: py38
+  3.9: py39
+  3.10: py310
+  3.11: py311
+  3.12: py312
+
+[testenv]
+allowlist_externals = poetry
+depends =
+  coverage: py{38,39,310,311,312}
+commands =
+  poetry run pytest
+"""
+
+[tool.pytest.ini_options]
+addopts = "-n auto --cov=timeoff --cov-append --cov-report=term-missing -vv"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+
+# --------------- #
+# LINT AND FORMAT #
+# --------------- #
 
 [tool.black]
 line-length = 120
-
-[tool.mypy]
-exclude = [
-  "venv/*",
-]
 
 [tool.ruff]
 target-version = "py38"
@@ -66,7 +119,6 @@ select = [
 #  "DTZ",  # flake8-datetimez
   "EM",   # flake8-errmsg
   "EXE",  # flake8-executable
-  "FA",   # flake8-future-annotations
   "ISC",  # flake8-implicit-str-concat
   "ICN",  # flake8-import-conventions
   "G",    # flake8-logging-format
@@ -93,7 +145,7 @@ select = [
   "RUF",  # Ruff-specific rules
 ]
 ignore = [
-  "PGH003",  # Use specific rule codes when ignoring type issues (mypy conflict)
+  "PGH003",  # use specific rule codes when ignoring type issues (mypy conflict)
 ]
 
 [tool.ruff.per-file-ignores]
@@ -102,6 +154,3 @@ ignore = [
 "src/timeoff/commands.py" = ["T201"]
 "src/timeoff/prompts.py" = ["T201"]
 "src/timeoff/schedules.py" = ["T201"]
-
-[tool.setuptools-git-versioning]
-enabled = true

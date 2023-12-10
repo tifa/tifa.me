@@ -1,7 +1,9 @@
+import sys
 from datetime import datetime
+from typing import Dict, List
 
-from questionary import prompt as q_prompt, Style
-from typing import List, Dict
+from questionary import Style
+from questionary import prompt as q_prompt
 
 DEFAULT_PROMPT_STYLE = Style(
     [
@@ -12,7 +14,7 @@ DEFAULT_PROMPT_STYLE = Style(
         ("instruction", ""),  # default
         ("answer", "#00FFFF bold"),
         ("question", ""),
-    ]
+    ],
 )
 
 
@@ -26,12 +28,12 @@ def prompt(questions: List[Dict]) -> Dict:
             ("instruction", ""),  # default
             ("answer", "#00FFFF bold"),
             ("question", ""),
-        ]
+        ],
     )
     kbi_msg = "Exiting..."
     res = q_prompt(questions, style=style, kbi_msg=kbi_msg)
     if len(res) == 0:
-        exit(0)
+        sys.exit(0)
     return res
 
 

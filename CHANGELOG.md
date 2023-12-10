@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Initial tests (prompt)
+
+## Changed
+
+- Switch dependency management and packaging to `Poetry`
+
 ## [0.0.6] - 2023-12-09
 
 ## Changed
 
-- Replaced unmaintained `PyInquirer` with `questionary`
+- Replace unmaintained `PyInquirer` with `questionary`
 
 ## [0.0.5] - 2023-09-04
 

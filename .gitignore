@@ -2,9 +2,7 @@
 __pycache__/
 
 # Distribution / packaging
-src/timeoff/_version.py
 dist/
-*.egg-info/
 
 # Environments
 venv/
@@ -12,3 +10,8 @@ venv/
 # Linter / type checker
 .mypy_cache/
 .ruff_cache/
+
+# Tests
+.coverage
+.pytest_cache/
+.tox/

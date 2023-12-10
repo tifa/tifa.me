@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 MAKEFLAGS += --warn-undefined-variables
 
-ACTIVATE = . venv/bin/activate;
+ACTIVATE = poetry run
 
 COL_WIDTH = 10
 FORMAT_YELLOW = 33
@@ -15,16 +15,13 @@ define usage
 @grep -E "^[A-Za-z0-9_ -]*:.*#" $< | while read -r l; do printf "  $(FORMAT_BOLD_YELLOW)%-$(COL_WIDTH)s$(FORMAT_END)$$(echo $$l | cut -f2- -d'#')\n" $$(echo $$l | cut -f1 -d':'); done
 endef
 
-
-.git/hooks/pre-commit:
-	$(ACTIVATE) pre-commit install
+install: venv/touchfile .git/hooks/pre-commit
+venv/touchfile: pyproject.toml
+	@test -d venv || mkdir venv
+	@poetry lock
+	@poetry install --with dev
+	@$(ACTIVATE) pre-commit install --hook-type pre-commit --hook-type pre-push
 	@touch $@
-
-venv: venv/touchfile .git/hooks/pre-commit
-venv/touchfile: requirements.txt
-	test -d venv || virtualenv venv
-	$(ACTIVATE) pip install -Ur requirements.txt
-	touch $@
 
 .PHONY: help
 help: Makefile  # Print this message
@@ -36,12 +33,12 @@ ruff:  # Auto-fix with Ruff
 
 .PHONY: check
 check: venv  # Run linters and formatters
-	@$(ACTIVATE) pre-commit run --all
+	@$(ACTIVATE) pre-commit run --all-files --hook-stage=manual
+
+.PHONY: test
+test: venv  # Run tests
+	@$(ACTIVATE) tox
 
 .PHONY: python
 python: venv  # Python shell with API imported
 	@$(ACTIVATE) python3 -i -c "from timeoff.__init__ import *"
-
-.PHONY: dev
-dev: venv
-	@$(ACTIVATE) pip install -e .
