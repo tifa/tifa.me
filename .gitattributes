@@ -1,0 +1,16 @@
+# Auto detect text files and perform LF normalization
+*   text=auto
+
+# Python
+*.py    text diff=python
+
+# Documents
+*.md    text diff=markdown
+
+# Serialization
+*.toml  text
+*.yaml  text
+
+# Exclude files from exporting
+.gitattributes export-ignore
+.gitignore     export-ignore
