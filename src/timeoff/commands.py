@@ -5,8 +5,8 @@ from pathlib import Path
 from tabulate import tabulate
 
 from timeoff.config import DATA_DIR, SCHEDULES
-from timeoff.model.entry import Absence, Accrued
-from timeoff.model.policy import Policy
+from timeoff.object.entry import Absence, Accrued
+from timeoff.object.policy import Policy
 from timeoff.prompt import date_validator, float_validator, prompt
 from timeoff.update import update_pto
 

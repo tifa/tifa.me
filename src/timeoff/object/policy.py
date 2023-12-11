@@ -2,8 +2,8 @@ import json
 from dataclasses import dataclass
 from datetime import date, datetime
 
-from timeoff.model.base import Model
-from timeoff.model.schedule import (
+from timeoff.object.base import Model
+from timeoff.object.schedule import (
     SemiMonthly,  # noqa: F401
 )
 

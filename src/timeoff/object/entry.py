@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 
-from timeoff.model.base import Model
+from timeoff.object.base import Model
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from timeoff.model.schedule import SemiMonthly
+from timeoff.object.schedule import SemiMonthly
 
 SCHEDULES = {
     "semi-monthly": SemiMonthly,

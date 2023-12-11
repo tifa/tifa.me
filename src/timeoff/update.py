@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
 from timeoff.exceptions import PolicyNotFoundError
-from timeoff.model.entry import Accrued
-from timeoff.model.policy import Policy
+from timeoff.object.entry import Accrued
+from timeoff.object.policy import Policy
 
 
 def effective_policy(policies, date):

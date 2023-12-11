@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from timeoff.model.entry import Absence, Accrued
+from timeoff.object.entry import Absence, Accrued
 
 
 def get() -> list:
