@@ -37,6 +37,10 @@ check: venv  # Run linters and formatters
 
 .PHONY: test
 test: venv  # Run tests
+	@$(ACTIVATE) pytest
+
+.PHONY: tox
+tox: venv  # Run tests in all environments
 	@$(ACTIVATE) tox
 
 .PHONY: python
