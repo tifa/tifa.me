@@ -17,7 +17,6 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -68,12 +67,11 @@ tox = "^4.11.4"
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{38,39,310,311,312}
+envlist = py{39,310,311,312}
 isolated_build = true
 
 [gh-actions]
 python =
-  3.8: py38
   3.9: py39
   3.10: py310
   3.11: py311
@@ -82,7 +80,7 @@ python =
 [testenv]
 allowlist_externals = poetry
 depends =
-  coverage: py{38,39,310,311,312}
+  coverage: py{39,310,311,312}
 commands =
   poetry run pytest
 """
@@ -102,7 +100,7 @@ branch = true
 line-length = 120
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 line-length = 120
 exclude = ["docs"]
 select = [

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- Tests, and in envs py38 through py12
+- Tests, and in envs py39 through py12
 
 ## Changed
 
