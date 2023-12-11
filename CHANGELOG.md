@@ -9,11 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 
-- Initial tests (prompt)
+- Tests, and in envs py38 through py12
 
 ## Changed
 
-- Switch dependency management and packaging to `Poetry`
+- Switch dependency management and packaging tool to `Poetry`
+
+## Fixed
+
+- Ordinal number conversion for integers ending in numbers between 10 and 20
 
 ## [0.0.6] - 2023-12-09
 
