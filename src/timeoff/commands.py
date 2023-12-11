@@ -185,31 +185,52 @@ def rm_prompt():
     show_table()
 
 
-@header
-def settings_prompt():
-    if Path(DATA_DIR).is_dir():
-        print("Functionality to update settings and policies TBD.")
-        print("If you want to start all over, delete the directory: ~/.timeoff")
-        print("This will wipe out all of your data! :(")
-        return
+def run_policy() -> None:
+    policies = Policy.get()
+    if len(policies) == 0:
+        print("Add a policy:")
+        return add_policy()
+
+    list_policies()
+
+    choices = ["Add policy", "Exit"] if len(policies) == 1 else ["Add policy", "Delete policy", "Exit"]
 
     questions = [
         {
-            "type": "text",
-            "name": "starting_balance",
-            "message": "Starting balance (hours)",
-            "default": "0",
-            "validate": float_validator(lambda val: val >= 0 or "Please enter a number greater than or equal to 0"),
-            "filter": lambda val: float(val),
+            "type": "select",
+            "name": "action",
+            "message": "Manage policies",
+            "choices": choices,
         },
+    ]
+    answers = prompt(questions)
+
+    if answers["action"] == "Add policy":
+        return add_policy()
+
+    if answers["action"] == "Delete policy":
+        return delete_policy()
+    return None
+
+
+def list_policies() -> None:
+    policies = Policy.get()
+    headers = ["Effective Date", "Schedule", "Description", "Rate"]
+    formatted = []
+    for date in policies:
+        policy = policies[date]
+        formatted.append([date, policy.schedule.__class__.__name__, policy.schedule.description(), policy.rate])
+    print(tabulate(formatted, headers=headers, tablefmt="pretty"))
+
+
+def add_policy() -> None:
+    questions = [
         {
             "type": "text",
-            "name": "starting_date",
-            "message": "Starting date (YYYY-MM-DD)",
+            "name": "effective_date",
+            "message": "Effective date (YYYY-MM-DD)",
             "default": str(datetime.now().date()),
-            "validate": date_validator(
-                lambda val: val <= datetime.now().date() or "Please enter a date that is on or before today",
-            ),
+            "validate": date_validator(lambda _: True),
             "filter": lambda val: datetime.strptime(val, "%Y-%m-%d").date(),
         },
         {
@@ -221,9 +242,7 @@ def settings_prompt():
         },
     ]
     answers = prompt(questions)
-
     schedule_args = answers["schedule"].setup_prompt()
-
     questions = [
         {
             "type": "text",
@@ -236,13 +255,29 @@ def settings_prompt():
     ]
     rate_answers = prompt(questions)
     answers.update(rate_answers)
+    Policy(answers["effective_date"], answers["schedule"].__name__, schedule_args, answers["rate"]).save()
+    print("✨ Saved!")
+    return run_policy()
 
-    Accrued(answers["starting_date"], answers["rate"]).save()
-    Policy(answers["starting_date"], answers["schedule"].__name__, schedule_args, answers["rate"]).save()
-    print("Saved!")
 
-    update_pto()
-    show_table()
+def delete_policy() -> None:
+    questions = [
+        {
+            "type": "select",
+            "name": "effective_date",
+            "message": "Effective date",
+            "choices": [str(date) for date in Policy.get()],
+        },
+    ]
+    answers = prompt(questions)
+    Policy.rm(answers["effective_date"])
+    print(f"⚡️ Deleted policy from {answers['effective_date']}")
+    return run_policy()
+
+
+@header
+def policy_prompt() -> None:
+    run_policy()
 
 
 def main():
@@ -261,9 +296,9 @@ def main():
     parser_rm = subparsers.add_parser("rm", help="Remove an absence")
     parser_rm.set_defaults(func=rm_prompt)
 
-    # Subparser for the 'settings' command
-    parser_settings = subparsers.add_parser("settings", help="Manage settings")
-    parser_settings.set_defaults(func=settings_prompt)
+    # Subparser for the 'policy' command
+    policy_settings = subparsers.add_parser("policy", help="Manage policies")
+    policy_settings.set_defaults(func=policy_prompt)
 
     args = parser.parse_args()
     if hasattr(args, "func"):
