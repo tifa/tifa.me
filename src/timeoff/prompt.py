@@ -5,18 +5,6 @@ from typing import Dict, List
 from questionary import Style
 from questionary import prompt as q_prompt
 
-DEFAULT_PROMPT_STYLE = Style(
-    [
-        ("separator", "fg:#cc5454"),
-        ("questionmark", "fg:#673ab7 bold"),
-        ("selected", "fg:#cc5454"),  # default
-        ("pointer", "fg:#673ab7 bold"),
-        ("instruction", ""),  # default
-        ("answer", "#00FFFF bold"),
-        ("question", ""),
-    ],
-)
-
 
 def prompt(questions: List[Dict]) -> Dict:
     style = Style(
